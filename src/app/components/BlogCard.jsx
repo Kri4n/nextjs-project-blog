@@ -1,10 +1,15 @@
+"use client";
+
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { supabase } from "../lib/supabase"; // Adjust import path for supabase
 import { Notyf } from "notyf"; // Import Notyf for notifications
 import Swal from "sweetalert2";
 
-const notyf = new Notyf();
+let notyf;
+if (typeof window !== "undefined") {
+  notyf = new Notyf();
+}
 
 export default function BlogCard({ blog }) {
   const user = useSelector((state) => state.auth.user);
