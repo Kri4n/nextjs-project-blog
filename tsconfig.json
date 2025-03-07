@@ -22,6 +22,18 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/app/redux/store.js",
+    "src/app/redux/authSlice.js",
+    "src/app/lib/supabase.js",
+    "src/app/layout.tsx",
+    "src/app/signup/page.jsx",
+    "src/app/page.tsx",
+    "src/app/login/page.jsx"
+  ],
   "exclude": ["node_modules"]
 }
