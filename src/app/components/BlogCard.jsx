@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { supabase } from "../lib/supabase"; // Adjust import path for supabase
 import { Notyf } from "notyf"; // Import Notyf for notifications
+import Swal from "sweetalert2";
 
 const notyf = new Notyf();
 
@@ -33,19 +34,27 @@ export default function BlogCard({ blog }) {
 
   // Function to delete the blog
   const deleteBlog = async () => {
-    const confirmation = window.confirm(
-      "Are you sure you want to delete this blog?"
-    );
-    if (!confirmation) return; // Don't proceed if the user cancels the action
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true, // You can reverse the order of the buttons for a more intuitive flow
+    });
 
-    const { error } = await supabase.from("blogs").delete().eq("id", blog.id); // Target the blog by ID for deletion
+    if (result.isConfirmed) {
+      // Proceed with deletion
+      const { error } = await supabase.from("blogs").delete().eq("id", blog.id);
 
-    if (error) {
-      console.error("Error deleting blog:", error.message);
-      notyf.error("Failed to delete blog.");
-    } else {
-      console.log("Blog deleted successfully.");
-      notyf.success("Blog deleted.");
+      if (error) {
+        console.error("Error deleting blog:", error.message);
+        notyf.error("Failed to delete blog.");
+      } else {
+        console.log("Blog deleted successfully.");
+        notyf.success("Blog deleted.");
+      }
     }
   };
 
