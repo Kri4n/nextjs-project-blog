@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,13 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const router = useRouter();
   const dispatch = useDispatch();
-  const notyf = new Notyf();
+  let notyf;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      notyf = new Notyf();
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,10 +28,10 @@ export default function Login() {
     });
 
     if (error) {
-      notyf.error("Login failed. Please check your credentials.");
+      notyf?.error("Login failed. Please check your credentials.");
     } else {
       dispatch(setUser(data.user));
-      notyf.success(`Logged in successfully!, Welcome ${email}`);
+      notyf?.success(`Logged in successfully!, Welcome ${email}`);
       router.push("/");
     }
   };
