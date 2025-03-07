@@ -30,10 +30,11 @@
     "src/app/redux/store.js",
     "src/app/redux/authSlice.js",
     "src/app/lib/supabase.js",
-    "src/app/layout.tsx",
+    "src/app/layout.jsx",
     "src/app/signup/page.jsx",
-    "src/app/page.tsx",
-    "src/app/login/page.jsx"
+    "src/app/page.jsx",
+    "src/app/login/page.jsx",
+    "src/app/components/Navbar.jsx"
   ],
   "exclude": ["node_modules"]
 }
