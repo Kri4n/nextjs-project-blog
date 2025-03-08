@@ -4,18 +4,32 @@ import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 
+/**
+ * Navbar Component
+ * A responsive navigation bar that adapts to both desktop and mobile screens.
+ *
+ * Features:
+ * - Displays home link for all users.
+ * - Shows login/signup links for unauthenticated users.
+ * - Shows logout button for authenticated users.
+ * - Mobile-friendly navigation with a collapsible menu.
+ *
+ * @returns {JSX.Element} Navbar component
+ */
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const user = useSelector((state) => state.auth.user);
-  const dispatch = useDispatch();
+  const [menuOpen, setMenuOpen] = useState(false); // State to manage mobile menu toggle
+  const user = useSelector((state) => state.auth.user); // Get authenticated user from Redux store
+  const dispatch = useDispatch(); // Redux dispatch function for actions
 
   return (
     <nav className="bg-gray-800 shadow-md p-4">
       <div className="container mx-auto flex justify-between items-center">
+        {/* Blog Title */}
         <Link href="/" className="text-xl font-bold text-white">
           Blog
         </Link>
 
+        {/* Desktop Navigation Links */}
         <div className="hidden md:flex space-x-6">
           <Link href="/" className="text-white">
             Home
@@ -45,7 +59,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu (Visible when menuOpen is true) */}
       {menuOpen && (
         <div className="md:hidden flex flex-col space-y-2 p-4">
           <Link

@@ -2,30 +2,43 @@
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { supabase } from "../lib/supabase"; // Adjust import path for supabase
-import { Notyf } from "notyf"; // Import Notyf for notifications
-import Swal from "sweetalert2";
+import { supabase } from "../lib/supabase"; // Import Supabase client instance
+import { Notyf } from "notyf"; // Import Notyf for user-friendly notifications
+import Swal from "sweetalert2"; // Import SweetAlert for confirmation dialogs
 
+// Initialize Notyf only on the client-side
 let notyf;
 if (typeof window !== "undefined") {
   notyf = new Notyf();
 }
 
+/**
+ * BlogCard Component
+ * Displays a single blog post with edit and delete options for the author.
+ *
+ * @param {Object} props - Component properties
+ * @param {Object} props.blog - Blog post data object
+ * @returns {JSX.Element} Blog card component
+ */
 export default function BlogCard({ blog }) {
-  const user = useSelector((state) => state.auth.user);
-  const isAuthor = user && user.id === blog.user_id;
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [title, setTitle] = useState(blog.title); // State for the title
-  const [content, setContent] = useState(blog.content); // State for the content
+  const user = useSelector((state) => state.auth.user); // Get logged-in user from Redux store
+  const isAuthor = user && user.id === blog.user_id; // Check if the logged-in user is the blog author
 
-  // Function to update the blog in Supabase
+  // Local state for modal visibility and editable blog fields
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [title, setTitle] = useState(blog.title);
+  const [content, setContent] = useState(blog.content);
+
+  /**
+   * Updates the blog post in Supabase
+   */
   const updateBlog = async () => {
     console.log("Updating blog:", { title, content });
 
     const { error } = await supabase
       .from("blogs")
-      .update({ title, content }) // Update the title and content
-      .eq("id", blog.id); // Target the specific blog by ID
+      .update({ title, content }) // Update title and content
+      .eq("id", blog.id); // Identify blog post by ID
 
     if (error) {
       console.error("Error updating blog:", error.message);
@@ -33,11 +46,13 @@ export default function BlogCard({ blog }) {
     } else {
       console.log("Blog updated successfully.");
       notyf.success("Updated");
-      setIsModalOpen(false); // Close the modal after update
+      setIsModalOpen(false); // Close modal after update
     }
   };
 
-  // Function to delete the blog
+  /**
+   * Deletes the blog post after user confirmation
+   */
   const deleteBlog = async () => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -46,11 +61,10 @@ export default function BlogCard({ blog }) {
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
-      reverseButtons: true, // You can reverse the order of the buttons for a more intuitive flow
+      reverseButtons: true, // Reverse button order for better UX
     });
 
     if (result.isConfirmed) {
-      // Proceed with deletion
       const { error } = await supabase.from("blogs").delete().eq("id", blog.id);
 
       if (error) {
@@ -65,6 +79,7 @@ export default function BlogCard({ blog }) {
 
   return (
     <>
+      {/* Modal for editing blog post */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
@@ -72,14 +87,14 @@ export default function BlogCard({ blog }) {
             <input
               type="text"
               placeholder="Title"
-              value={title} // Bind the title state to the input
-              onChange={(e) => setTitle(e.target.value)} // Update state on change
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               className="w-full p-2 border rounded mb-3"
             />
             <textarea
               placeholder="Content"
-              value={content} // Bind the content state to the textarea
-              onChange={(e) => setContent(e.target.value)} // Update state on change
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               className="w-full p-2 border rounded h-32"
             ></textarea>
             <div className="flex justify-end gap-2 mt-4">
@@ -91,7 +106,7 @@ export default function BlogCard({ blog }) {
               </button>
               <button
                 className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900"
-                onClick={updateBlog} // Trigger update on save
+                onClick={updateBlog}
               >
                 Save
               </button>
@@ -100,6 +115,7 @@ export default function BlogCard({ blog }) {
         </div>
       )}
 
+      {/* Blog Card UI */}
       <div
         className={`bg-white shadow-md rounded-lg p-4 relative ${
           isModalOpen ? "blur-sm pointer-events-none" : ""
@@ -117,6 +133,7 @@ export default function BlogCard({ blog }) {
         </p>
         <p className="mt-2 text-sm text-gray-500">Author ID: {blog.user_id}</p>
 
+        {/* Show edit & delete buttons if user is the author */}
         {isAuthor && (
           <div className="mt-4 flex gap-2">
             <button
@@ -127,7 +144,7 @@ export default function BlogCard({ blog }) {
             </button>
             <button
               className="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-900"
-              onClick={deleteBlog} // Trigger delete on click
+              onClick={deleteBlog}
             >
               Delete
             </button>

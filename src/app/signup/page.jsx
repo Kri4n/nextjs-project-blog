@@ -4,19 +4,33 @@ import { supabase } from "../lib/supabase";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {
+  // State variables for storing user input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const router = useRouter();
 
+  /**
+   * Handles user signup process.
+   * Prevents default form submission, registers the user with Supabase,
+   * and redirects to the login page upon successful registration.
+   *
+   * @param {Event} e - Form submission event
+   */
   const handleSignup = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevents page refresh
+
     const { error } = await supabase.auth.signUp({ email, password });
+
     if (!error) {
       alert("Registered Successfully");
+
+      // Reset form fields after successful registration
       setEmail("");
       setPassword("");
       setUsername("");
+
+      // Redirect user to the login page
       router.push("/login");
     }
   };
@@ -29,6 +43,7 @@ export default function Signup() {
           onSubmit={handleSignup}
           className="bg-white p-6 rounded shadow-md w-full max-w-sm"
         >
+          {/* Email Input */}
           <input
             type="email"
             placeholder="Email"
@@ -37,6 +52,8 @@ export default function Signup() {
             required
             className="w-full p-2 border rounded mb-4"
           />
+
+          {/* Password Input */}
           <input
             type="password"
             placeholder="Password"
@@ -45,6 +62,8 @@ export default function Signup() {
             required
             className="w-full p-2 border rounded mb-4"
           />
+
+          {/* Signup Button */}
           <button
             type="submit"
             className="w-full bg-gray-800 text-white p-2 rounded"
